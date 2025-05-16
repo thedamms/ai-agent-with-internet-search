@@ -1,6 +1,8 @@
 from dotenv import load_dotenv
 import os
+import uuid
 
+# Load environment variables from .env file
 load_dotenv()
 
 from langchain_openai import ChatOpenAI
@@ -9,24 +11,22 @@ from langchain_core.messages import HumanMessage
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.prebuilt import create_react_agent
 
-memory = MemorySaver()
-model = ChatOpenAI(model_name="gpt-4-turbo-preview")
-search = TavilySearchResults(max_results=2)
-tools = [search]
-agent_executor = create_react_agent(model, tools, checkpointer=memory)
+class Agent:
+    def __init__(self):
+        self.memory = MemorySaver()
+        self.model = ChatOpenAI(model_name=os.getenv("OPENAI_MODEL", "gpt-4-turbo-preview"))
+        self.search = TavilySearchResults(max_results=2)
+        self.tools = [self.search]
+        self.agent_executor = create_react_agent(self.model, self.tools, checkpointer=self.memory)
+        self.thread_id = str(uuid.uuid4())
+        self.config = {"configurable": {"thread_id": self.thread_id}}
 
-config = {"configurable": {"thread_id": "abc123"}}
-
-print("Chat initialized! Type 'quit' to exit.")
-while True:
-    user_input = input("\nYou: ").strip()
-    if user_input.lower() == 'quit':
-        break
-        
-    for step in agent_executor.stream(
-        {"messages": [HumanMessage(content=user_input)]},
-        config,
-        stream_mode="values",
-    ):
-        print("\nAssistant:", end=" ")
-        step["messages"][-1].pretty_print()
+    def process_message(self, message: str):
+        response = None
+        for step in self.agent_executor.stream(
+            {"messages": [HumanMessage(content=message)]},
+            self.config,
+            stream_mode="values",
+        ):
+            response = step["messages"][-1]
+        return response
