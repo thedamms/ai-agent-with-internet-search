@@ -1,0 +1,33 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# No Comments Rule
+
+Code should be self-documenting through clear naming conventions. Comments are not allowed as they often become outdated and can be misleading.
+
+## Pattern
+```regex
+#.*$
+```
+
+## Severity
+error
+
+## Example
+```python
+# Bad
+def process(x):  # processes the input
+    return x * 2
+
+# Good
+def double_input_value(input_value):
+    return input_value * 2
+```
+
+## Rationale
+- Comments can become outdated and misleading
+- Self-documenting code is more maintainable
+- Clear naming conventions make code more readable
+- Reduces cognitive load by eliminating redundant information

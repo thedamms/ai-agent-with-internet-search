@@ -1,18 +1,18 @@
-from agent import Agent
+from agent import WebSearchAgent
 
-def main():
-    """Run the agent in command-line interface mode"""
-    agent = Agent()
-    print("Chat initialized! Type 'quit' to exit.")
+def run_web_search_cli():
+    web_search_agent = WebSearchAgent()
+    print("Web Search Agent initialized! Type 'quit' to exit.")
+    print("Ask me anything, and I'll search the web for accurate information.")
     
     while True:
-        user_input = input("\nYou: ").strip()
-        if user_input.lower() == 'quit':
+        user_query = input("\nYou: ").strip()
+        if user_query.lower() == 'quit':
             break
             
-        response = agent.process_message(user_input)
+        search_result = web_search_agent.process_message(user_query)
         print("\nAssistant:", end=" ")
-        response.pretty_print()
+        search_result.pretty_print()
 
 if __name__ == "__main__":
-    main() 
+    run_web_search_cli() 
